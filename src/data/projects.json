@@ -1,0 +1,128 @@
+[
+  {
+    "type": "website",
+    "title": "PIC SAFE FOOD",
+    "description": "Enterprise food safety intelligence and verification platform. Integrates computer vision models, real-time biochemical telemetry schemas, and a low-latency React dashboard.",
+    "media": "https://pic-safe-food.vercel.app",
+    "role": "Full Stack & AI Engineer",
+    "year": "2025",
+    "category": "Full Stack",
+    "image": "./Asset/img/projects/pic-safe-food.jpg"
+  },
+  {
+    "type": "website",
+    "title": "NOTEBOOKLM AI CLONE",
+    "description": "Neural document synthesis environment recreating Google NotebookLM. Features multi-source vector search retrieval, dynamic citation graphs, and synchronized dual-speaker audio overview podcast generation.",
+    "media": "https://github.com/yuvraj-debug/notebooklm-clone",
+    "role": "Lead AI Systems Architect",
+    "year": "2025",
+    "category": "AI Systems",
+    "image": "./Asset/img/projects/notebooklm-ai.jpg"
+  },
+  {
+    "type": "render",
+    "title": "CYBERPUNK ENVIRONMENT",
+    "year": "2025",
+    "role": "WebGL & Three.js Shader Developer",
+    "description": "Interactive WebGL 3D environment exploration featuring volumetric neon shaders, dynamic lighting loops, and detailed architectural meshes for interactive browser experiences.",
+    "renders": [
+      {
+        "solid": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850523/Untitled_rbleby.png",
+        "material": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850529/0001_a4n9pw.png",
+        "final": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850519/0001-2_qs9nah.jpg"
+      }
+    ],
+    "image": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850519/0001-2_qs9nah.jpg",
+    "category": "3D Web"
+  },
+  {
+    "type": "website",
+    "title": "LIMITLESS AI PLATFORM",
+    "description": "Context-aware autonomous workspace automation system. Captures real-time screen telemetry, active context memory, and executes complex multi-step dev workflows without latency.",
+    "media": "https://github.com/yuvraj-debug/limitless-ai",
+    "role": "Full Stack Systems Architect",
+    "year": "2025",
+    "category": "AI Systems",
+    "image": "./Asset/img/projects/limitless-ai.jpg"
+  },
+  {
+    "type": "website",
+    "title": "OBSIDIAN AUDIO CLIENT",
+    "description": "High-fidelity dark web streaming engine featuring real-time Web Audio API FFT waveform visualizers, dynamic stereo panning, and stateful React queue architecture.",
+    "media": "https://github.com/yuvraj-debug/spotify",
+    "role": "Frontend & Audio API Architect",
+    "year": "2024",
+    "category": "Websites",
+    "image": "./Asset/img/projects/obsidian-audio.jpg"
+  },
+  {
+    "type": "website",
+    "title": "NEURAL AST AUTOFIX",
+    "description": "Intelligent code refactoring and syntax diagnostic assistant that parses AST structures in real-time, detects security regressions, and generates verified automated patch diffs.",
+    "media": "https://github.com/yuvraj-debug/autofix-my-code",
+    "role": "Compiler & Full Stack Engineer",
+    "year": "2024",
+    "category": "AI Systems",
+    "image": "./Asset/img/projects/autofix-code.jpg"
+  },
+  {
+    "type": "website",
+    "title": "HERMES CLOUD DASHBOARD",
+    "description": "Mission-critical infrastructure monitor processing millions of live WebSocket events across cloud Kubernetes clusters with sub-millisecond chart rendering.",
+    "media": "https://github.com/yuvraj-debug/hermes-dashboards",
+    "role": "Distributed Systems & UI Lead",
+    "year": "2024",
+    "category": "Full Stack",
+    "image": "./Asset/img/projects/hermes-dashboard.jpg"
+  },
+  {
+    "type": "website",
+    "title": "VOXEL WEBL ENGINE",
+    "description": "Browser-based infinite voxel terrain engine built with Three.js, chunk meshing algorithms, compute shaders, and responsive pointer-lock camera controls.",
+    "media": "https://github.com/yuvraj-debug/minecraft-web",
+    "role": "WebGL & Graphics Programmer",
+    "year": "2024",
+    "category": "3D Web",
+    "image": "./Asset/img/projects/voxel-engine.jpg"
+  },
+  {
+    "type": "website",
+    "title": "SHADOW KERNEL WASM",
+    "description": "In-browser WebAssembly Linux environment with virtual filesystem persistence, interactive bash emulation, syntax-highlighted editor, and CRT phosphor bloom.",
+    "media": "https://github.com/yuvraj-debug",
+    "role": "WebAssembly & Systems Developer",
+    "year": "2025",
+    "category": "Websites",
+    "image": "./Asset/img/projects/shadow-kernel.jpg"
+  },
+  {
+    "type": "website",
+    "title": "NEXUS BOT ARCHITECTURE",
+    "description": "Autonomous multi-shard Discord bot cluster managing high-volume server moderation, custom slash commands, LLM conversational context, and Redis-backed state sync.",
+    "media": "https://github.com/yuvraj-debug/ai-discord-bot",
+    "role": "Bot Infrastructure Architect",
+    "year": "2024",
+    "category": "Discord Bots",
+    "image": "./Asset/img/projects/discord-nexus.jpg"
+  },
+  {
+    "type": "website",
+    "title": "STREAMCLIP AI PIPELINE",
+    "description": "End-to-end Python pipeline automating video stream segmenting, neural engagement spike detection, Whisper transcription alignment, and automated short-form export generation.",
+    "media": "https://github.com/yuvraj-debug/yt-cliping",
+    "role": "Python & Media Pipeline Developer",
+    "year": "2024",
+    "category": "Automation",
+    "image": "./Asset/img/projects/streamclip-ai.jpg"
+  },
+  {
+    "type": "website",
+    "title": "SMART FILE ORGANIZER",
+    "description": "High-performance Python command-line utility and background service that automatically classifies, parses, and organizes complex directory trees by heuristics and rules.",
+    "media": "https://github.com/yuvraj-debug/smart-file-organizer",
+    "role": "Python Systems Developer",
+    "year": "2024",
+    "category": "Automation",
+    "image": "./Asset/img/projects/hermes-dashboard.jpg"
+  }
+]

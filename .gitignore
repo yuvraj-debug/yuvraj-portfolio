@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build caches & temp
+.cache/
+.vercel/
+
+# Unused scratch and test files
+grabcut*.png
+live_preview.js
+*.log

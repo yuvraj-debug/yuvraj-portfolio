@@ -1,0 +1,6 @@
+node_modules
+.git
+scripts
+*.map
+grabcut*.png
+live_preview.js

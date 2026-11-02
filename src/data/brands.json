@@ -1,0 +1,13 @@
+[
+  { "file": "react.svg", "name": "React" },
+  { "file": "ts.svg", "name": "TypeScript" },
+  { "file": "node.svg", "name": "Node.js" },
+  { "file": "python.svg", "name": "Python" },
+  { "file": "tailwind.svg", "name": "Tailwind CSS" },
+  { "file": "supabase.svg", "name": "Supabase" },
+  { "file": "github.svg", "name": "GitHub" },
+  { "file": "discord.svg", "name": "Discord" },
+  { "file": "vercel.svg", "name": "Vercel" },
+  { "file": "netlify.svg", "name": "Netlify" },
+  { "file": "vscode.svg", "name": "VS Code" }
+]
