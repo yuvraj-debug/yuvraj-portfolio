@@ -35,7 +35,7 @@ const awards = [
 function Reveal({ children, className = '', delay = 0, as = 'div' }) {
   const enabled = useContext(MotionContext);
   const Component = motion[as];
-  return <Component className={className} initial={enabled ? { opacity: 0, y: 32 } : false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.12 }} transition={{ duration: enabled ? 0.75 : 0, delay, ease: EASE }}>{children}</Component>;
+  return <Component className={className} initial={enabled ? { opacity: 0, y: 32 } : false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: enabled ? 0.75 : 0, delay, ease: EASE }}>{children}</Component>;
 }
 
 function MediaImage({ src, alt, className = '', priority = false, ...props }) {
@@ -86,7 +86,8 @@ async function runSwarmRebuild(setMotionOn, motionOn) {
     await new Promise(r => requestAnimationFrame(() => { veil.style.opacity = '1'; r(); }));
     await new Promise(r => setTimeout(r, 160));
 
-    // 2. Disable motion while hidden behind the veil so blueprint captures elements at full opacity and natural offset
+    // 2. Force full visibility and natural offset for blueprint scanning
+    root.setAttribute('data-swarm-scanning', 'true');
     if (wasMotion) {
       setMotionOn(false);
       root.dataset.motion = 'off';
@@ -151,6 +152,7 @@ async function runSwarmRebuild(setMotionOn, motionOn) {
     try { if (window.__swarmRebuild?.app) window.__swarmRebuild.stop(false); } catch (_) {}
     window.scrollTo({ top: 0, behavior: 'instant' });
   } finally {
+    root.removeAttribute('data-swarm-scanning');
     const v = document.getElementById('swarm-veil');
     if (v) v.remove();
     if (wasMotion) {
@@ -222,7 +224,7 @@ function ProjectCard({ project, index, onOpen }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [-12, 12]);
   const video = ['youtube', 'drive'].includes(project.type);
-  return <motion.article ref={ref} className="project-card" layout initial={enabled ? { opacity: 0, y: 32 } : false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false, amount: 0.08 }} transition={{ duration: enabled ? 0.6 : 0, delay: (index % 3) * 0.06, ease: EASE }} exit={{ opacity: 0, scale: 0.96 }}>
+  return <motion.article ref={ref} className="project-card" layout initial={enabled ? { opacity: 0, y: 32 } : false} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.08 }} transition={{ duration: enabled ? 0.6 : 0, delay: (index % 3) * 0.06, ease: EASE }} exit={{ opacity: 0, scale: 0.96 }}>
     <button className="project-open" onClick={() => onOpen(project)} aria-label={`View ${project.title}`}><motion.div className="project-picture" style={enabled ? { y } : {}}><MediaImage src={project.image} alt={project.title}/></motion.div><span className="project-type">{project.type === 'render' ? '3D BREAKDOWN' : video ? 'FILM / VIDEO' : project.type === 'website' ? 'LIVE PRODUCT / REPO' : 'STILL / SCREEN'}</span><span className="project-hover">{video ? <Play fill="currentColor" size={18}/> : <ArrowUpRight size={22}/>}</span><span className="project-frame" aria-hidden="true" /></button>
     <button className="project-caption" onClick={() => onOpen(project)}><span className="project-number display">{String(index + 1).padStart(2, '0')}</span><span><h3>{project.title}</h3><span className="project-category">{project.category}{project.year ? ` / ${project.year}` : ''}</span></span><ArrowUpRight size={20}/></button>
   </motion.article>;

@@ -489,6 +489,7 @@
    * in screen coords on an "over"/"under" layer.
    */
   function captureModel(env, shot) {
+    document.documentElement.setAttribute("data-swarm-scanning", "true");
     const { ox, oy, sx, sy, vw, vh } = env.geom();
     const docW = Math.max(env.scrollWidth(), vw);
     const docH = Math.min(Math.max(env.scrollHeight(), vh), MAX_WORLD_H);
@@ -1039,8 +1040,8 @@
         flushRun();
         return;
       }
-      const op = ctx.op * parseFloat(cs.opacity);
-      if (!(op > 0.03)) return;
+      const elemOpacity = parseFloat(cs.opacity);
+      const op = ctx.op * (isNaN(elemOpacity) || elemOpacity <= 0.03 ? 1 : elemOpacity);
       const r = el.getBoundingClientRect();
       // "visually hidden" accessibility text: 1px boxes, clip:rect(0 0 0 0), clip-path:inset(50%)
       // (html/body overflow belongs to the viewport, so a 0px-tall body clips nothing)
@@ -1383,6 +1384,7 @@
         if (!covered) backdrops.push({ x: b.r.left, y: b.r.top, w: b.r.width, h: b.r.height, key: b.key, color: pageBg.color });
       }
 
+    try { document.documentElement.removeAttribute("data-swarm-scanning"); } catch (_) {}
     return { items, tasks, groups, guides, docW, docH, backdrops, portKey };
   }
 
@@ -2301,7 +2303,7 @@
       const sv = Math.abs(vp.sy - (this.lastScroll == null ? vp.sy : this.lastScroll)) / Math.max(dt, 0.001);
       this.lastScroll = vp.sy;
       this.vel = Math.max(this.vel * Math.exp(-dt * 1.2), this.vel * 0.7 + sv * 0.3);
-      if (this.started) this.frontier = Math.max(this.frontier, this.viewBot);
+      if (this.started) this.frontier = Math.max(this.frontier, this.viewBot + 50);
       const avail = this.started ? this.available() : [];
       this.tempo = clamp(2.1 + this.vel / 900 + (avail.length / Math.max(1, this.cursors.length)) * 0.5, 2.1, 4.5) * this.speed;
 
@@ -3466,6 +3468,8 @@
       this.tour = false;
       this.tourV = 0;
       this.tourAcc = 0;
+      this.tourY = null;
+      this.maxIdealSy = 0;
       this.speeds = [1, 2, 3];
       this.speedIx = 0;
       this.complete = false;
@@ -3669,20 +3673,88 @@
       const E = this.engine;
       if (!E.started) return;
       const g = this.env.geom();
-      const maxY = this.env.scrollHeight() - g.vh;
-      if (g.sy >= maxY - 1) {
-        this.tourV = 0;
-        return;
+      const maxY = Math.max(0, this.env.scrollHeight() - g.vh);
+      if (maxY <= 0) return;
+
+      if (this.tourY == null) {
+        this.tourY = g.sy;
+        this.maxIdealSy = g.sy;
+      } else if (g.sy > this.tourY + 60) {
+        // User manually scrolled down further
+        this.tourY = g.sy;
+        this.maxIdealSy = Math.max(this.maxIdealSy || 0, g.sy);
       }
-      const crew = Math.max(MIN_AGENTS, E.cursors.filter((c) => !c.leaving).length);
-      const backlog = E.backlog();
-      const target = backlog <= Math.max(4, crew * 0.6) ? 230 : backlog <= crew * 1.5 ? 80 : 0;
-      this.tourV += (target - this.tourV) * Math.min(1, dt * 2.5);
-      this.tourAcc += this.tourV * dt;
-      if (this.tourAcc >= 1) {
-        const d = Math.floor(this.tourAcc);
-        this.tourAcc -= d;
-        this.env.scrollBy(d);
+
+      // Collect positions of active/working cursors to keep them centered
+      const activeCursors = E.cursors.filter((c) => !c.sticky && !c.leaving && (c.task || !c.home));
+      const cursorYs = [];
+      for (const c of activeCursors) {
+        if (c.task && typeof c.task.y === "number") {
+          cursorYs.push(c.task.y);
+        } else if (typeof c.y === "number") {
+          cursorYs.push(c.y);
+        }
+      }
+
+      // If no cursor is currently busy, look for unfinished world tasks
+      if (cursorYs.length === 0) {
+        const nextWorldTasks = E.tasks.filter((t) => t.layer === "world" && (t.state === "active" || t.state === "wait"));
+        if (nextWorldTasks.length > 0) {
+          cursorYs.push(nextWorldTasks[0].y);
+        } else {
+          const allWorldTasks = E.tasks.filter((t) => t.layer === "world");
+          if (allWorldTasks.length > 0) {
+            cursorYs.push(allWorldTasks[allWorldTasks.length - 1].y);
+          }
+        }
+      }
+
+      // Compute centroid of cursor activity
+      let targetCenterY;
+      if (cursorYs.length > 0) {
+        cursorYs.sort((a, b) => a - b);
+        const median = cursorYs[Math.floor(cursorYs.length / 2)];
+        const mean = cursorYs.reduce((a, b) => a + b, 0) / cursorYs.length;
+        targetCenterY = median * 0.6 + mean * 0.4;
+      } else {
+        targetCenterY = g.sy + g.vh * 0.5;
+      }
+
+      // Monotonic downward target: idealSy places cursors in center (50% of vh)
+      // Strictly non-decreasing so the camera NEVER scrolls up!
+      const currentTargetSy = targetCenterY - g.vh * 0.5;
+      this.maxIdealSy = Math.max(this.maxIdealSy || 0, currentTargetSy);
+      const idealSy = Math.max(0, Math.min(maxY, this.maxIdealSy));
+
+      // Distance to target (always >= 0)
+      const dist = Math.max(0, idealSy - this.tourY);
+      const speedMultiplier = E.speed || 1;
+
+      // Smooth and consistent downward velocity:
+      // When far from target: accelerates smoothly up to ~450px/s
+      // When near target: smooth cruising speed (~70-130px/s)
+      // When at target: steady gentle progression while tasks remain
+      let targetV;
+      if (dist > 30) {
+        targetV = Math.min(480 * speedMultiplier, 70 * speedMultiplier + dist * 1.6 * speedMultiplier);
+      } else if (dist > 0) {
+        targetV = Math.max(40 * speedMultiplier, dist * 2.2 * speedMultiplier);
+      } else {
+        targetV = (E.doneCount < E.tasks.length ? 35 : 0) * speedMultiplier;
+      }
+
+      // Smooth camera acceleration and deceleration (dolly inertia)
+      this.tourV += (targetV - this.tourV) * Math.min(1, dt * 3.8);
+      this.tourV = Math.max(0, this.tourV); // ONLY DOWNSCROLL
+
+      // Advance scroll position monotonically
+      this.tourY += this.tourV * dt;
+      this.tourY = Math.min(maxY, this.tourY);
+
+      const newScroll = Math.round(this.tourY);
+      // Strictly only downscroll or hold
+      if (newScroll > g.sy) {
+        this.env.scrollTo(newScroll);
       }
     }
 

@@ -32,7 +32,7 @@
         "final": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850519/0001-2_qs9nah.jpg"
       }
     ],
-    "image": "https://res.cloudinary.com/do76nqxfr/image/upload/v1772850519/0001-2_qs9nah.jpg",
+    "image": "./Asset/img/projects/voxel-engine.jpg",
     "category": "3D Web"
   },
   {
